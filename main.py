@@ -1,3 +1,7 @@
+import os
+import tempfile
+
+from fastapi import UploadFile, File
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -166,3 +170,84 @@ def ask_question(request: QuestionRequest):
             status_code=500,
             detail=f"Agent execution failed: {str(error)}"
         )
+
+# --------------------------------------------------
+# Upload CSV / Excel Dataset
+# --------------------------------------------------
+
+@app.post("/upload")
+async def upload_dataset(
+    file: UploadFile = File(...)
+):
+    """
+    Upload a CSV or Excel file.
+
+    The uploaded file is saved temporarily,
+    ingested into PostgreSQL,
+    and synchronized into DuckDB.
+    """
+
+    filename = file.filename or ""
+
+    allowed_extensions = (
+        ".csv",
+        ".xlsx",
+        ".xls"
+    )
+
+    if not filename.lower().endswith(
+        allowed_extensions
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Only CSV and Excel files are supported."
+        )
+
+    table_name = os.path.splitext(filename)[0]
+
+    table_name = (
+        table_name
+        .lower()
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
+
+    try:
+
+        file_content = await file.read()
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=os.path.splitext(filename)[1]
+        ) as temp_file:
+
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        from database.csv_loader import ingest_file
+
+        ingest_file(
+            temp_file_path,
+            table_name
+        )
+
+        return {
+            "status": "success",
+            "message": "Dataset uploaded successfully.",
+            "filename": filename,
+            "table_name": table_name
+        }
+
+    except Exception as error:
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Dataset ingestion failed: {str(error)}"
+        )
+
+    finally:
+
+        if "temp_file_path" in locals() and os.path.exists(
+            temp_file_path
+        ):
+            os.remove(temp_file_path)
