@@ -1,0 +1,29 @@
+[project]
+name = "agentic-eda"
+version = "0.1.0"
+description = "An Agentic AI-powered Exploratory Data Analysis system"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "python-dotenv",
+    "langchain",
+    "langchain-openrouter",
+    "psycopg[binary]",
+    "pandas",
+    "numpy",
+    "sqlalchemy",
+    "duckdb",
+    "scipy",
+    "scikit-learn",
+    "plotly",
+    "pyarrow",
+    "streamlit",
+    "openpyxl>=3.1.5",
+    "fastapi>=0.162.0",
+    "uvicorn>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]

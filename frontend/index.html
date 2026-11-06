@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>EDA Agent</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <h2>EDA Agent</h2>
+
+            <button
+                id="newChatButton"
+                class="new-chat-button"
+            >
+                + New Chat
+            </button>
+
+        </div>
+
+
+        <!-- Dataset Section -->
+
+        <div class="sidebar-section">
+
+            <h3>Dataset</h3>
+
+            <label
+                for="fileInput"
+                class="upload-button"
+            >
+                Upload CSV / Excel
+            </label>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept=".csv,.xlsx,.xls"
+                hidden
+            >
+
+            <div id="uploadStatus"></div>
+
+        </div>
+
+
+        <!-- SQL Section -->
+
+        <div class="sidebar-section">
+
+            <h3>Generated SQL</h3>
+
+            <button
+                id="showQueriesButton"
+                class="sidebar-button"
+            >
+                Show SQL
+            </button>
+
+        </div>
+
+
+        <!-- Tables Section -->
+
+        <div class="sidebar-section">
+
+            <h3>Data</h3>
+
+            <button
+                id="showTablesButton"
+                class="sidebar-button"
+            >
+                Show Tables
+            </button>
+
+        </div>
+
+
+        <!-- SQL Container -->
+
+        <div id="queriesContainer"></div>
+
+
+        <!-- Sidebar Footer -->
+
+        <div class="sidebar-footer">
+
+            <span>Agentic EDA</span>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ==========================================
+         MAIN CHAT AREA
+    =========================================== -->
+
+    <main class="main">
+
+
+        <!-- Top Bar -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>EDA Agent</h1>
+
+                <p>
+                    Explore your dataset using natural language.
+                </p>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ======================================
+             CHAT AREA
+        ======================================= -->
+
+        <section
+            id="chatContainer"
+            class="chat-container"
+        >
+
+
+            <!-- Welcome Message -->
+
+            <div class="welcome-message">
+
+                <h2>
+                    How can I help you explore your data?
+                </h2>
+
+                <p>
+                    Ask questions about distributions,
+                    correlations, outliers, trends,
+                    missing values, and more.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ======================================
+             INPUT AREA
+        ======================================= -->
+
+        <div class="composer-wrapper">
+
+            <div class="composer">
+
+                <textarea
+                    id="question"
+                    placeholder="Ask anything about your dataset..."
+                    rows="1"
+                ></textarea>
+
+
+                <button
+                    id="askButton"
+                    class="send-button"
+                >
+                    ↑
+                </button>
+
+            </div>
+
+
+            <p class="composer-hint">
+                EDA Agent can analyze your dataset using SQL,
+                statistics, and visualizations.
+            </p>
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<!-- Plotly -->
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+
+<!-- Application JavaScript -->
+
+<script src="app.js"></script>
+
+
+</body>
+
+</html>
