@@ -9,7 +9,7 @@ def remove_markdown_tables(text):
     Remove Markdown table blocks from agent text.
 
     The actual table is rendered separately by the frontend,
-    so Markdown tables inside the LLM response would be duplicates.
+    so Markdown tables inside text would be duplicates.
     """
 
     if not text:
@@ -25,7 +25,6 @@ def remove_markdown_tables(text):
 
         line = lines[i]
 
-        # Detect a possible Markdown table header.
         if (
             "|" in line
             and i + 1 < len(lines)
@@ -34,8 +33,6 @@ def remove_markdown_tables(text):
                 lines[i + 1]
             )
         ):
-
-            # Skip the entire Markdown table.
             i += 2
 
             while (
@@ -72,10 +69,18 @@ def extract_agent_response(response):
 
         message_type = type(message).__name__
 
+        # ==================================================
+        # AI MESSAGE
+        # ==================================================
+
         if message_type == "AIMessage":
 
             if message.content:
                 final_text = message.content
+
+        # ==================================================
+        # TOOL MESSAGE
+        # ==================================================
 
         elif message_type == "ToolMessage":
 
@@ -87,6 +92,10 @@ def extract_agent_response(response):
             except (TypeError, json.JSONDecodeError):
 
                 parsed_content = content
+
+            # --------------------------------------------------
+            # CHART RESULT
+            # --------------------------------------------------
 
             if (
                 isinstance(parsed_content, dict)
@@ -101,31 +110,66 @@ def extract_agent_response(response):
                     "figure": chart,
                 })
 
+            # --------------------------------------------------
+            # SQL QUERY RESULT
+            # --------------------------------------------------
+
             elif (
                 isinstance(parsed_content, dict)
                 and parsed_content.get("type") == "table"
                 and parsed_content.get("sql")
             ):
 
+                # Keep the generated SQL so the frontend
+                # can display it in the Generated SQL sidebar.
+
                 queries.append({
                     "sql": parsed_content["sql"]
                 })
 
-                tables.append(parsed_content)
+                # IMPORTANT:
+                #
+                # Do NOT add SQL results to `tables`.
+                #
+                # SQL results are already represented by
+                # the generated SQL section in the sidebar.
+                #
+                # Adding them to `tables` causes the same
+                # query results to appear again in the main
+                # response area.
+
+            # --------------------------------------------------
+            # NON-SQL TABLE RESULT
+            # --------------------------------------------------
 
             elif (
                 isinstance(parsed_content, dict)
                 and parsed_content.get("type") == "table"
             ):
 
+                # Structured table results that are not
+                # SQL query results can still be rendered
+                # as tables in the main response area.
+
                 tables.append(parsed_content)
+
+            # --------------------------------------------------
+            # OTHER ANALYSIS RESULT
+            # --------------------------------------------------
 
             else:
 
                 analysis.append(parsed_content)
 
-    # Remove Markdown tables from the LLM's text.
+    # ==================================================
+    # CLEAN FINAL TEXT
+    # ==================================================
+
     final_text = remove_markdown_tables(final_text)
+
+    # ==================================================
+    # STRUCTURED RESPONSE
+    # ==================================================
 
     return {
         "type": "agent_response",

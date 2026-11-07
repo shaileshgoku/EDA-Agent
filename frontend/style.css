@@ -362,7 +362,7 @@ body {
 ========================================== */
 
 .message {
-    max-width: 760px;
+    max-width: 1100px;
 
     margin: 0 auto 24px;
 
@@ -378,7 +378,9 @@ body {
 
 
 .message-bubble {
-    max-width: 680px;
+    max-width: 100%;
+
+    width: 100%;
 
     padding: 13px 16px;
 
@@ -396,6 +398,10 @@ body {
     background: #e5e7eb;
 
     color: #111827;
+
+    width: auto;
+
+    max-width: 680px;
 }
 
 
@@ -440,7 +446,9 @@ body {
 ========================================== */
 
 .chart-card {
-    max-width: 760px;
+    width: 100%;
+
+    max-width: 1100px;
 
     margin: 12px auto 28px;
 
@@ -451,6 +459,8 @@ body {
     border-radius: 12px;
 
     padding: 16px;
+
+    overflow: hidden;
 }
 
 
@@ -460,6 +470,13 @@ body {
     color: #4b5563;
 
     margin-bottom: 10px;
+}
+
+
+.chart-card > div {
+    width: 100% !important;
+
+    min-height: 420px;
 }
 
 
@@ -672,6 +689,18 @@ body {
         padding-left: 14px;
 
         padding-right: 14px;
+    }
+
+    .message {
+        max-width: 100%;
+    }
+
+    .chart-card {
+        max-width: 100%;
+    }
+
+    .chart-card > div {
+        min-height: 350px;
     }
 
 }
