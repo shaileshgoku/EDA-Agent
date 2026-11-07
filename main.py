@@ -17,6 +17,7 @@ from agent.response import extract_agent_response
 
 from agent.memory import (
     get_conversation,
+    save_message,
     save_conversation,
 )
 
@@ -142,12 +143,15 @@ def ask_question(request: QuestionRequest):
         )
 
         # Add the current user question
-        conversation.append({
-            "role": "user",
-            "content": request.question
-        })
+        # through the memory module.
+        save_message(
+            request.session_id,
+            "user",
+            request.question
+        )
 
-        # Send the complete conversation to the agent
+        # Send the complete conversation
+        # to the agent.
         response = agent.invoke({
             "messages": conversation
         })
@@ -170,6 +174,7 @@ def ask_question(request: QuestionRequest):
             status_code=500,
             detail=f"Agent execution failed: {str(error)}"
         )
+
 
 # --------------------------------------------------
 # Upload CSV / Excel Dataset

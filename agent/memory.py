@@ -21,18 +21,29 @@ def get_conversation(session_id):
     return conversation_store[session_id]
 
 
-def save_message(session_id, message):
+def save_message(session_id, role, content):
     """
-    Save one message to a session's conversation history.
+    Add one message to a session's conversation history.
+
+    role:
+        The message role, such as "user".
+
+    content:
+        The message content.
     """
 
     conversation = get_conversation(session_id)
 
-    conversation.append(message)
+    conversation.append({
+        "role": role,
+        "content": content,
+    })
+
 
 def save_conversation(session_id, conversation):
     """
-    Save the complete conversation history for a session.
+    Save the complete conversation history
+    for a session.
     """
 
     conversation_store[session_id] = conversation
@@ -45,5 +56,3 @@ def clear_conversation(session_id):
 
     if session_id in conversation_store:
         del conversation_store[session_id]
-
-
